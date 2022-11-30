@@ -8,7 +8,7 @@ const login = async (req, res) => {
     throw new CustomAPIError("Please provide email and password", 400);
   }
   //demo, normally id should be provided by DB
-  const id = new Date().getDate;
+  const id = new Date().getDate();
 
   const token = jwt.sign({ id, username }, process.env.JWT_SECRET, {
     expiresIn: "30d",
@@ -18,24 +18,14 @@ const login = async (req, res) => {
 };
 
 const dashboard = async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new CustomAPIError("Please provide bearer or token", 401);
-  }
+  console.log(req.user);
+  const luckyNumber = Math.floor(Math.random() * 100);
 
-  const token = authHeader.split(" ")[1];
+  res.status(200).json({
+    msg: `Hello, ${req.user.username}`,
+    secret: `Here is your authorized data, lucky number ${luckyNumber}`,
+  });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const luckyNumber = Math.floor(Math.random() * 100);
-
-    res.status(200).json({
-      msg: `Hello, ${decoded.username}`,
-      secret: `Here is your authorized data, lucky number ${luckyNumber}`,
-    });
-  } catch (error) {
-    throw new CustomAPIError("Not authorized to access this route", 401);
-  }
   console.log(token);
 };
 
